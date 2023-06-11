@@ -22,7 +22,7 @@ class Channel:
         self.view_count = self.channel_i["items"][0]["statistics"]["viewCount"]
 
     def __repr__(self):
-        return f"{self.title}(https://www.youtube.com/channel/{self.url})"
+        return f"{self.__class__.__name__}({self.title}(https://www.youtube.com/channel/{self.url}))"
 
     def __str__(self):
         return f"{self.title}{self.url}"
