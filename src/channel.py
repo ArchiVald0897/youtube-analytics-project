@@ -13,13 +13,13 @@ class Channel:
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.__channel_id = channel_id
-        self.channel_i = self.youtube.channels().list(id=self.channel_id, part="snippet,statistics").execute()
-        self.title = self.channel_i["items"][0]["snippet"]["title"]
-        self.description = self.channel_i["items"][0]["snippet"]["description"]
-        self.url = self.channel_i["items"][0]["snippet"]["customUrl"]
-        self.subscribers_count = self.channel_i["items"][0]["statistics"]["subscriberCount"]
-        self.vidio_count = self.channel_i["items"][0]["statistics"]["videoCount"]
-        self.view_count = self.channel_i["items"][0]["statistics"]["viewCount"]
+        self.channel_info = self.youtube.channels().list(id=self.channel_id, part="snippet,statistics").execute()
+        self.title = self.channel_info["items"][0]["snippet"]["title"]
+        self.description = self.channel_info["items"][0]["snippet"]["description"]
+        self.url = self.get_channel()
+        self.subscribers_count = self.channel_info["items"][0]["statistics"]["subscriberCount"]
+        self.video_count = self.channel_info["items"][0]["statistics"]["videoCount"]
+        self.view_count = self.channel_info["items"][0]["statistics"]["viewCount"]
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.title}(https://www.youtube.com/channel/{self.url}))"
@@ -47,7 +47,6 @@ class Channel:
     def __ge__(self, other):
         return int(self.subscribers_count) >= int(other.subscribers_count)
 
-
     def print_info(self) -> None:
         """Выводит в консоль информацию о канале в формате JSON"""
         channel = self.youtube.channels().list(id=self.channel_id, part="snippet,statistics").execute()
@@ -67,4 +66,4 @@ class Channel:
 
     def to_json(self, filename):
         with open(filename, "w", encoding="utf-8") as file:
-            json.dumps(self.__dict__, file, ensure_ascii=False)
+            json.dump(self.__dict__, file, ensure_ascii=False)
