@@ -1,5 +1,4 @@
 import datetime
-
 from src.channel import YouTubeAPI
 from src.video import Video
 
