@@ -1,5 +1,3 @@
-import os
-from googleapiclient.discovery import build
 from src.channel import YouTubeAPI
 
 
