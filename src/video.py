@@ -1,13 +1,10 @@
 import os
 from googleapiclient.discovery import build
+from src.channel import YouTubeAPI
 
 
-class Video:
+class Video(YouTubeAPI):
     """Класс для ютуб-канала"""
-
-    # YT_API_KEY скопирован из гугла и вставлен в переменные окружения
-    api_key: str = os.getenv("YT_API_KEY")
-    youtube = build('youtube', 'v3', developerKey=api_key)
 
     def __init__(self, video_id: str):
         self.video_id = video_id
@@ -39,10 +36,9 @@ class PLVideo(Video):
     def __init__(self, video_id: str, playlist_id: str):
         super().__init__(video_id)
         self.playlist_id = playlist_id
-        self.playlist_videos = self.youtube.playlistItems().list(playlistId=playlist_id,
-                                                                 part='contentDetails',
-                                                                 maxResults=50,
-                                                                 ).execute()
+        self.playlist_info = self.youtube.playlistItems().list(playlistId=playlist_id,
+                                                               part='contentDetails',
+                                                               maxResults=50).execute()
 
     def __str__(self):
         return self.title

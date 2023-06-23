@@ -1,26 +1,16 @@
 import datetime
+
+from src.channel import YouTubeAPI
 from src.video import Video
-import os
-from googleapiclient.discovery import build
 
 
-class PlayList:
-    api_key: str = os.getenv("YT_API_KEY")
-    youtube = build('youtube', 'v3', developerKey=api_key)
+class PlayList(YouTubeAPI):
 
-    def __init__(self, playlist_id):
+    def __init__(self, playlist_id: str):
         self.playlist_id = playlist_id
-
-    @property
-    def title(self):
-        # Получаем информацию о плейлисте и возвращаем его название
         playlist_info = self.youtube.playlists().list(id=self.playlist_id, part="snippet").execute()
-        return playlist_info["items"][0]["snippet"]["title"]
-
-    @property
-    def url(self):
-        # Возвращаем ссылку на плейлист
-        return f'https://www.youtube.com/playlist?list={self.playlist_id}'
+        self.title = playlist_info["items"][0]["snippet"]["title"]
+        self.url = f"https://www.youtube.com/playlist?list={self.playlist_id}"
 
     @property
     def total_duration(self):
@@ -58,6 +48,7 @@ class PlayList:
         return best_video_url
 
 
+@staticmethod
 def duration_to_seconds(duration):
     """Функция для конвертирования длительности видео в секунды"""
     duration_str = duration.replace("PT", "").lower()
