@@ -7,30 +7,25 @@ class Video(YouTubeAPI):
     """Класс для ютуб-канала"""
 
     def __init__(self, video_id: str):
-        self.video_id = video_id
+        self._video_id = video_id
         try:
-            self.video_i = self.youtube.videos().list(id=video_id, part="snippet,statistics").execute()
-        except HttpError:
-            self.video_i = {"items": [{}]}
+            video_response = self.youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
+                                                        id=video_id).execute()
 
-    @property
-    def title(self):
-        return self.video_i["items"][0]["snippet"]["title"] if self.video_i["items"] else None
-
-    @property
-    def url(self):
-        return f'https://www.youtube.com/watch?v={self.video_id}'
-
-    @property
-    def view_count(self):
-        return self.video_i["items"][0]["statistics"]["viewCount"] if self.video_i["items"] else None
-
-    @property
-    def like_count(self):
-        return self.video_i["items"][0]["statistics"]["likeCount"] if self.video_i["items"] else None
+            self.video_title: str = video_response['items'][0]['snippet']['title']
+            self.view_count: int = video_response['items'][0]['statistics']['viewCount']
+            self.like_count: int = video_response['items'][0]['statistics']['likeCount']
+            self.comment_count: int = video_response['items'][0]['statistics']['commentCount']
+            self.video_url: str = f'https://youtu.be/{self._video_id}'
+        except Exception:
+            self.video_title = None
+            self.view_count = None
+            self.like_count = None
+            self.comment_count = None
+            self.video_url = None
 
     def __str__(self):
-        return self.title or ""
+        return f"{self.video_title}"
 
 
 class PLVideo(Video):
@@ -47,4 +42,6 @@ class PLVideo(Video):
             self.playlist_info = {"items": []}
 
     def __str__(self):
-        return self.title or ""
+        return f"{self.video_title}"
+
+
